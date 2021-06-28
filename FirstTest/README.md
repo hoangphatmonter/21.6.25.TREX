@@ -3,6 +3,7 @@
 
 # Logs
 - `npm install -g typescript` to use tsc global
+- `npm install -D typescript`
 - `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser` to allow use tsc. Use `Set-ExecutionPolicy Restricted` to get back
 - `tsc --init`
 - `npm init`
