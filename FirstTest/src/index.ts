@@ -7,3 +7,16 @@ form.addEventListener('submit', (e) => {
     const data = formData(form);
     console.log(data);
 });
+
+const person: any = {};
+console.log(person.speak());
+
+type Per = {
+    name: string,
+    speak(a: string): void
+}
+
+interface Person {
+    name: string,
+    speak(a: string): void
+}
