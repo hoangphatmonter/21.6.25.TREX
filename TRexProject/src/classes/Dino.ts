@@ -71,11 +71,11 @@ export class Dino {
         }
     }
 
-    draw(canvas: CanvasRenderingContext2D) {
-        canvas.beginPath();
-        // canvas.arc(this.xBottom, this.yBottom - 20, 20, 0, Math.PI * 2, true);
-        canvas.rect(this.xBottom - this.width / 2, this.yBottom - this.height, this.width, this.height);
-        canvas.fillStyle = 'red';
-        canvas.fill();
+    draw(context: CanvasRenderingContext2D) {
+        context.beginPath();
+        // context.arc(this.xBottom, this.yBottom - 20, 20, 0, Math.PI * 2, true);
+        context.rect(this.xBottom - this.width / 2, this.yBottom - this.height, this.width, this.height);
+        context.fillStyle = 'red';
+        context.fill();
     }
 }
