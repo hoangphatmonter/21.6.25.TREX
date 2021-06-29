@@ -5,7 +5,7 @@
 - resize window
 - ~~gameover~~
 - add background
-- add highscore
+- ~~add highscore~~
 
 # Refs
 - [Create an Arkanoid Game with TypeScript - Tutorial](https://youtu.be/7bejSTim38A?t=3274)

@@ -36,7 +36,7 @@ export class GameOverScene {
         return false;
     }
 
-    draw(context: CanvasRenderingContext2D) {
+    draw(context: CanvasRenderingContext2D, score: number, highScore: number) {
         context.beginPath();
         // context.arc(this.xBottom, this.yBottom - 20, 20, 0, Math.PI * 2, true);
         context.rect(this.xCenter - this.boxWidth / 2, this.yCenter - this.boxHeight / 2, this.boxWidth, this.boxHeight);
@@ -44,6 +44,19 @@ export class GameOverScene {
         context.fill();
         context.beginPath();
         context.drawImage(this.restartBtnImage, this.xCenter - this.boxWidth / 2, this.yCenter - this.boxHeight / 2);
-        console.log('show gameover')
+        // score
+        context.beginPath();
+        context.font = "50px sans-serif";
+        context.fillStyle = "white";
+        context.textAlign = "center";
+        context.fillText('Score: ' + score.toString(), this.xCenter, this.yCenter);
+        context.closePath();
+        //highscore
+        context.beginPath();
+        context.font = "20px sans-serif";
+        context.fillStyle = "white";
+        context.textAlign = "center";
+        context.fillText('High Score: ' + highScore.toString(), this.xCenter, this.yCenter + this.boxHeight / 3);
+        context.closePath();
     }
 }

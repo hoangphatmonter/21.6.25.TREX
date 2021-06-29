@@ -86,11 +86,12 @@ function update(time: number, delta: number) {
             dTopY < cBotY && // may be a part of bot c in d if not couch
             dBotY > cTopY // may be a part of top c in d if not jump
         ) {
-            // show game over scene
-            // - stop the game (remove the newest request frame in queue)
+            // stop the game (remove the newest request frame in queue)
             cancelAnimationFrame(animationId);
             // change game state
             gameState = GameState.OVER;
+            // update high score if need
+            scoreCounter.updateHighScore();
 
             //cactuses = [];
             //scoreCounter.setScore(0);
@@ -122,7 +123,7 @@ function render() {
     }
     else if (gameState == GameState.OVER) {
         // show game over screen
-        gameOverScene.draw(c);
+        gameOverScene.draw(c, scoreCounter.getScore(), scoreCounter.getHighScore());
     }
 }
 
