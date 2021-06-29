@@ -1,3 +1,7 @@
+# Known bugs
+- ~~In start scene, in seconds, it turns to game over scene.~~
+- In start scene, all object include game scene have to initialize. After play, all objects initialize again.
+
 # TODO list
 - improve jump
 - ~~add collision~~
@@ -6,6 +10,9 @@
 - ~~gameover~~
 - add background
 - ~~add highscore~~
+- gamespeed
+- ~~start screen~~
+- improve score counter
 
 # Refs
 - [Create an Arkanoid Game with TypeScript - Tutorial](https://youtu.be/7bejSTim38A?t=3274)

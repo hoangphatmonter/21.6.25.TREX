@@ -3,6 +3,7 @@ import { Cactus } from './classes/Cactus'
 import { Ground } from './classes/Ground'
 import { ScoreCounter } from './classes/ScoreCounter'
 import { GameOverScene } from './classes/GameOverScene'
+import { StartScene } from './classes/StartScene'
 
 // get the canvas of the screen
 let canvas: HTMLCanvasElement = document.getElementsByTagName('canvas')[0];
@@ -23,13 +24,15 @@ let ground: Ground;
 const scoreCounter = new ScoreCounter(20, 20, 15);
 // list of cactuses
 let cactuses: Cactus[];
+// game start box
+let startScene: StartScene;
 // game over box
 let gameOverScene: GameOverScene;
 
 let lastTime: number;
 let animationId: number;
 
-init(window.innerWidth, window.innerHeight);
+init(window.innerWidth, window.innerHeight, GameState.READY);
 
 // time to push more cactus
 let cactusSpawnTime = genCacTime();
@@ -50,80 +53,85 @@ function processInput() {
 }
 
 function update(time: number, delta: number) {
-    // some code put here if window resize
+    if (gameState === GameState.PLAYING) {
+        // some code put here if window resize
 
-    // update dino state
-    dino.update(delta, ground);
+        // update dino state
+        dino.update(delta, ground);
 
-    // update score
-    let curScore = scoreCounter.getScore();
-    scoreCounter.setScore(curScore + 1);
+        // update score
+        let curScore = scoreCounter.getScore();
+        scoreCounter.setScore(curScore + 1);
 
-    // update cactus state
-    for (let i = 0; i < cactuses.length; i++) {
-        cactuses[i].update(delta);
-        // check collision
+        // update cactus state
+        for (let i = 0; i < cactuses.length; i++) {
+            cactuses[i].update(delta);
+            // check collision
 
-        // destroy if out of scene
-        if (cactuses[i].getBotRightPosition()[0] < 0) {
-            cactuses.splice(i, 1);
-            i--;
-            continue;
+            // destroy if out of scene
+            if (cactuses[i].getBotRightPosition()[0] < 0) {
+                cactuses.splice(i, 1);
+                i--;
+                continue;
+            }
+
+            // collision happen when cactus enter the Dino area
+            let cLeftX = cactuses[i].getTopLeftPosition()[0];
+            let cRightX = cactuses[i].getTopRightPosition()[0];
+            let cTopY = cactuses[i].getTopLeftPosition()[1];
+            let cBotY = cactuses[i].getBotLeftPosition()[1];
+            let dLeftX = dino.getBotLeftPosition()[0];
+            let dRightX = dino.getBotRightPosition()[0];
+            let dTopY = dino.getTopLeftPosition()[1];
+            let dBotY = dino.getBotLeftPosition()[1];
+            if (
+                dLeftX < cRightX && // c in front of d
+                dRightX > cLeftX && // may be a part of left c in d if not jump
+                dTopY < cBotY && // may be a part of bot c in d if not couch
+                dBotY > cTopY // may be a part of top c in d if not jump
+            ) {
+                // stop the game (remove the newest request frame in queue)
+                cancelAnimationFrame(animationId);
+                // change game state
+                console.log('over')
+                gameState = GameState.OVER;
+                // update high score if need
+                scoreCounter.updateHighScore();
+
+                //cactuses = [];
+                //scoreCounter.setScore(0);
+            }
         }
-
-        // collision happen when cactus enter the Dino area
-        let cLeftX = cactuses[i].getTopLeftPosition()[0];
-        let cRightX = cactuses[i].getTopRightPosition()[0];
-        let cTopY = cactuses[i].getTopLeftPosition()[1];
-        let cBotY = cactuses[i].getBotLeftPosition()[1];
-        let dLeftX = dino.getBotLeftPosition()[0];
-        let dRightX = dino.getBotRightPosition()[0];
-        let dTopY = dino.getTopLeftPosition()[1];
-        let dBotY = dino.getBotLeftPosition()[1];
-        if (
-            dLeftX < cRightX && // c in front of d
-            dRightX > cLeftX && // may be a part of left c in d if not jump
-            dTopY < cBotY && // may be a part of bot c in d if not couch
-            dBotY > cTopY // may be a part of top c in d if not jump
-        ) {
-            // stop the game (remove the newest request frame in queue)
-            cancelAnimationFrame(animationId);
-            // change game state
-            gameState = GameState.OVER;
-            // update high score if need
-            scoreCounter.updateHighScore();
-
-            //cactuses = [];
-            //scoreCounter.setScore(0);
+        // push more cactus
+        cactusSpawnTime -= delta;
+        if (cactusSpawnTime < 0) {
+            cactuses.push(new Cactus(canvas.width + 10, canvas.height - ground.getHeight(), 200));
+            cactusSpawnTime = genCacTime();
         }
-    }
-    // push more cactus
-    cactusSpawnTime -= delta;
-    if (cactusSpawnTime < 0) {
-        cactuses.push(new Cactus(canvas.width + 10, canvas.height - ground.getHeight(), 200));
-        cactusSpawnTime = genCacTime();
     }
 }
 
 function render() {
-    // clear screen
-    c.clearRect(0, 0, canvas.width, canvas.height);
-    // draw score
-    scoreCounter.draw(c);
-    // draw ground
-    ground.draw(c);
-    // draw all objects
-    dino.draw(c);
-    for (let i = 0; i < cactuses.length; i++) {
-        cactuses[i].draw(c);
-    }
-
     if (gameState === GameState.READY) {
         // show start screen
+        startScene.draw(c);
     }
-    else if (gameState == GameState.OVER) {
+    else if (gameState === GameState.OVER) {
         // show game over screen
         gameOverScene.draw(c, scoreCounter.getScore(), scoreCounter.getHighScore());
+    }
+    else if (gameState === GameState.PLAYING) {
+        // clear screen
+        c.clearRect(0, 0, canvas.width, canvas.height);
+        // draw score
+        scoreCounter.draw(c);
+        // draw ground
+        ground.draw(c);
+        // draw all objects
+        dino.draw(c);
+        for (let i = 0; i < cactuses.length; i++) {
+            cactuses[i].draw(c);
+        }
     }
 }
 
@@ -145,29 +153,39 @@ canvas.addEventListener('click', (event: MouseEvent) => {
 
     if (gameState === GameState.OVER) {
         if (gameOverScene.isInRestartBtn(mousePos.x, mousePos.y)) {
-            init(window.innerWidth, window.innerHeight);
+            init(window.innerWidth, window.innerHeight, GameState.PLAYING);
+        }
+    }
+    else if (gameState === GameState.READY) {
+        if (startScene.isInPlayBtn(mousePos.x, mousePos.y)) {
+            init(window.innerWidth, window.innerHeight, GameState.PLAYING);
         }
     }
 })
 
-function init(width: number, height: number) {
+function init(width: number, height: number, state: GameState) {
+    console.log('dlsajd')
     // update canvas size
     canvas.width = width - 100;
     canvas.height = height - 100;
 
     isSpacePressed = false;
-    gameState = GameState.READY;
+    gameState = state;
+
+    if (gameState === GameState.READY) {
+        startScene = new StartScene(canvas.width / 2, canvas.height / 2);
+    }
+
+    gameOverScene = new GameOverScene(canvas.width / 2, canvas.height / 2);
     ground = new Ground(canvas.width, canvas.height);
     dino = new Dino(0 + 50, canvas.height - ground.getHeight() - 100);
     cactuses = [];
-    gameOverScene = new GameOverScene(canvas.width / 2, canvas.height / 2);
 
     scoreCounter.setScore(0);
-
-    // something put here to init cactus position resize to screen
-
     lastTime = window.performance.now()
     animationId = requestAnimationFrame(loop)
+
+    // something put here to init cactus position resize to screen
 }
 
 function genCacTime() {
