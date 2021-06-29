@@ -1,6 +1,7 @@
 import { Dino } from './classes/Dino'
 import { Cactus } from './classes/Cactus'
 import { Ground } from './classes/Ground'
+import { ScoreCounter } from './classes/ScoreCounter'
 
 // get the canvas of the screen
 let canvas: HTMLCanvasElement = document.getElementsByTagName('canvas')[0];
@@ -12,20 +13,21 @@ export const GRAVITY = 700; // px/s^2
 
 // create player
 const dino = new Dino(0, 0);
-
 // create ground
 const ground = new Ground(0, 0);
+// create score counter
+const scoreCounter = new ScoreCounter(20, 20, 15);
 
-const cactuses: Cactus[] = [];
+let cactuses: Cactus[] = [];
 
 window.addEventListener('keydown', (event: KeyboardEvent) => {
-    if (event.key == " ") {
+    if (event.key === " " || event.key === 'w') {
         isSpacePressed = true;
     }
 })
 
 window.addEventListener('keyup', (event: KeyboardEvent) => {
-    if (event.key == " ") {
+    if (event.key === " " || event.key === 'w') {
         isSpacePressed = false;
     }
 })
@@ -40,6 +42,8 @@ function init(width: number, height: number) {
 
     // update dino state
     dino.setPosition(0 + 50, canvas.height - ground.getHeight() - 100);
+
+    scoreCounter.setScore(0);
 
     // something put here to init cactus position
 }
@@ -82,16 +86,41 @@ function update(time: number, delta: number) {
     // update dino state
     dino.update(delta, ground);
 
+    // update score
+    let curScore = scoreCounter.getScore();
+    scoreCounter.setScore(curScore + 1);
+
     // update cactus state
     for (let i = 0; i < cactuses.length; i++) {
         cactuses[i].update(delta);
         // check collision
 
+        // destroy if out of scene
+        if (cactuses[i].getBotRightPosition()[0] < 0) {
+            cactuses.splice(i, 1);
+            i--;
+            continue;
+        }
+
         // collision happen when cactus enter the Dino area
-        let cbl = cactuses[i].getBotLeftPosition();
-        let cbr = cactuses[i].getBotRightPosition();
-        let dbl = dino.getBotLeftPosition();
-        let dbr = dino.getBotRightPosition();
+        let cLeftX = cactuses[i].getTopLeftPosition()[0];
+        let cRightX = cactuses[i].getTopRightPosition()[0];
+        let cTopY = cactuses[i].getTopLeftPosition()[1];
+        let cBotY = cactuses[i].getBotLeftPosition()[1];
+        let dLeftX = dino.getBotLeftPosition()[0];
+        let dRightX = dino.getBotRightPosition()[0];
+        let dTopY = dino.getTopLeftPosition()[1];
+        let dBotY = dino.getBotLeftPosition()[1];
+        if (
+            dLeftX < cRightX && // c in front of d
+            dRightX > cLeftX && // may be a part of left c in d if not jump
+            dTopY < cBotY && // may be a part of bot c in d if not couch
+            dBotY > cTopY // may be a part of top c in d if not jump
+        ) {
+            // show game over scene
+            cactuses = [];
+            scoreCounter.setScore(0);
+        }
     }
     // push more cactus
     cactusSpawnTime -= delta;
@@ -104,6 +133,8 @@ function update(time: number, delta: number) {
 function render() {
     // clear screen
     c.clearRect(0, 0, canvas.width, canvas.height);
+    // draw score
+    scoreCounter.draw(c);
     // draw ground
     ground.draw(c);
     // draw all objects
