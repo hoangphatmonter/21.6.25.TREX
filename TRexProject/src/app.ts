@@ -8,7 +8,7 @@ let c: CanvasRenderingContext2D = canvas.getContext('2d')!;
 
 // Button status
 let isSpacePressed = false;
-export const GRAVITY = 10; // px/s^2
+export const GRAVITY = 700; // px/s^2
 
 // create player
 const dino = new Dino(0, 0);
@@ -39,7 +39,7 @@ function init(width: number, height: number) {
     ground.setPosition(canvas.width, canvas.height);
 
     // update dino state
-    dino.setPosition(0 + 50, canvas.height - ground.getHeight());
+    dino.setPosition(0 + 50, canvas.height - ground.getHeight() - 100);
 
     // something put here to init cactus position
 }

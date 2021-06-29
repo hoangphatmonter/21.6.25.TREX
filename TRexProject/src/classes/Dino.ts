@@ -6,9 +6,9 @@ export class Dino {
     private height = 20;
     private velocityY = 0; // velocity
     private originalHeight = this.height;
-    private jumpForce = 15;
+    private jumpAddVelocityY = 300;  // px/s // if jump, add this velocity to velocityY
     private isSpacePress = false;
-    private grounded = false;
+    private grounded = true;
 
     constructor(
         private xBottom: number,   // ground cordinates
@@ -33,18 +33,30 @@ export class Dino {
     }
 
     setJump(val: boolean) {
-        this.isSpacePress = true;
+        this.isSpacePress = val;
     }
 
     update(delta: number, ground: Ground) {
         // check for jump
-        if (this.isSpacePress) {
-
+        if (this.isSpacePress && this.grounded) {
+            this.velocityY -= this.jumpAddVelocityY;
+            this.isSpacePress = false;
+            this.grounded = false;
+            console.log('jump');
         }
 
+        this.yBottom += this.velocityY * delta / 1000;
+
         // check for gravity
-        if (this.yBottom < ground.getBotPosition()[1] - ground.getHeight()) { // check on ground
-            this.velocityY += GRAVITY;
+        let groundCorY = ground.getBotPosition()[1] - ground.getHeight();
+        if (this.yBottom < groundCorY) { // check on ground
+            this.velocityY += GRAVITY * delta / 1000;
+            this.grounded = false;
+        }
+        else {
+            this.velocityY = 0;
+            this.grounded = true;
+            this.yBottom = groundCorY;
         }
     }
 
