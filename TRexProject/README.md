@@ -14,6 +14,9 @@
 - ~~start screen~~
 - improve score counter
 
+# Images
+- [Images](https://github.com/wayou/t-rex-runner/blob/gh-pages/assets/offline-sprite-1x.png)
+
 # Refs
 - [Create an Arkanoid Game with TypeScript - Tutorial](https://youtu.be/7bejSTim38A?t=3274)
 - [JavaScript Tutorial - HTML5 Canvas - lineWidth and pixel approximations - part 6](https://youtu.be/_q-Q4O-0np4?list=PLQw6R3B2BPb29ktkWaiIzB3JBWguN7bER&t=34)

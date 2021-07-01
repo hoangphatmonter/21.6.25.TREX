@@ -140,6 +140,9 @@ window.addEventListener('keydown', (event: KeyboardEvent) => {
     if (event.key === " " || event.key === 'w') {
         isSpacePressed = true;
     }
+    else if (event.key == 's') {
+
+    }
 })
 
 window.addEventListener('keyup', (event: KeyboardEvent) => {
