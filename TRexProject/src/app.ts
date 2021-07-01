@@ -1,4 +1,4 @@
-import { Dino } from './classes/Dino'
+import { Dino, BtnStatus } from './classes/Dino'
 import { Cactus } from './classes/Cactus'
 import { Ground } from './classes/Ground'
 import { ScoreCounter } from './classes/ScoreCounter'
@@ -13,7 +13,7 @@ enum GameState { READY, PLAYING, OVER };
 
 export const GRAVITY = 700; // px/s^2
 // Button status
-let isSpacePressed: boolean;
+let btnPressed: BtnStatus;
 let gameState: GameState;
 
 // create player
@@ -49,7 +49,7 @@ function loop() {
 
 function processInput() {
     // check if user press space
-    dino.setJump(isSpacePressed);
+    dino.setBtnPressed(btnPressed);
 }
 
 function update(time: number, delta: number) {
@@ -138,16 +138,19 @@ function render() {
 
 window.addEventListener('keydown', (event: KeyboardEvent) => {
     if (event.key === " " || event.key === 'w') {
-        isSpacePressed = true;
+        btnPressed = BtnStatus.JUMP;
     }
     else if (event.key == 's') {
-
+        btnPressed = BtnStatus.COUCH;
     }
 })
 
 window.addEventListener('keyup', (event: KeyboardEvent) => {
     if (event.key === " " || event.key === 'w') {
-        isSpacePressed = false;
+        btnPressed = BtnStatus.NONE
+    }
+    else if (event.key === 's') {
+        btnPressed = BtnStatus.NONE;
     }
 })
 
@@ -172,7 +175,7 @@ function init(width: number, height: number, state: GameState) {
     canvas.width = width - 100;
     canvas.height = height - 100;
 
-    isSpacePressed = false;
+    btnPressed = BtnStatus.NONE;
     gameState = state;
 
     if (gameState === GameState.READY) {

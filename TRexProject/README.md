@@ -1,6 +1,7 @@
 # Known bugs
 - ~~In start scene, in seconds, it turns to game over scene.~~
 - In start scene, all object include game scene have to initialize. After play, all objects initialize again.
+- Images do not load immediately.
 
 # TODO list
 - improve jump
