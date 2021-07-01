@@ -8,7 +8,6 @@ export class Dino {
     private width: number;
     private height: number;
     private velocityY = 0; // velocity
-    private originalHeight: number;
     private jumpAddVelocityY = 300;  // px/s // if jump, add this velocity to velocityY
     private couchAddVelocityY = 100; // px/s // if on air, go down faster
     private curBtnPress = BtnStatus.NONE;
@@ -30,9 +29,13 @@ export class Dino {
     ) {
         this.image = new Image();
         this.image.src = this.path + 'idle.png';
-        this.width = this.image.width;
-        this.height = this.image.height;
-        this.originalHeight = this.height;
+
+        this.width = 0;
+        this.height = 0;
+        this.image.onload = () => {
+            this.width = this.image.width;
+            this.height = this.image.height;
+        }
     }
 
     getPosition(): [number, number] {
@@ -90,7 +93,7 @@ export class Dino {
         this.yBottom += this.velocityY * delta / 1000;
 
         // check for gravity
-        let groundCorY = ground.getBotPosition()[1] - ground.getHeight();
+        let groundCorY = ground.getYBotLeftPosition() - ground.getHeight();
         // - if on air
         if (this.yBottom < groundCorY) { // check on ground
             this.velocityY += GRAVITY * delta / 1000;
@@ -124,15 +127,16 @@ export class Dino {
             this.image.src = this.path + 'couch' + this.curCouchFrames + '.png';
         }
         // update width and height
-        this.width = this.image.width;
-        this.height = this.image.height;
-        console.log(this.width, this.height)
+        this.image.onload = () => {
+            this.width = this.image.width;
+            this.height = this.image.height;
+        }
     }
 
     draw(context: CanvasRenderingContext2D) {
         context.beginPath();
         // context.rect(this.xBottom - this.width / 2, this.yBottom - this.height, this.width, this.height);
         context.drawImage(this.image, this.xBottom - this.width / 2, this.yBottom - this.height);
-        context.fill();
+        // context.fill();
     }
 }

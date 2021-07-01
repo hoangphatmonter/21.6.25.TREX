@@ -56,6 +56,9 @@ function update(time: number, delta: number) {
     if (gameState === GameState.PLAYING) {
         // some code put here if window resize
 
+        // update ground
+        ground.update(delta, canvas);
+
         // update dino state
         dino.update(delta, ground);
 
@@ -183,7 +186,7 @@ function init(width: number, height: number, state: GameState) {
     }
 
     gameOverScene = new GameOverScene(canvas.width / 2, canvas.height / 2);
-    ground = new Ground(canvas.width, canvas.height);
+    ground = new Ground(0, canvas.height, 200);
     dino = new Dino(0 + 50, canvas.height - ground.getHeight() - 100);
     cactuses = [];
 
