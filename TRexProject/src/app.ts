@@ -13,7 +13,7 @@ let c: CanvasRenderingContext2D = canvas.getContext('2d')!;
 
 enum GameState { READY, PLAYING, OVER };
 
-export const GRAVITY = 700; // px/s^2
+export const GRAVITY = 5000; // px/s^2
 let GAMESPEED = 200; // px/s
 // Button status
 let btnPressed: BtnStatus;

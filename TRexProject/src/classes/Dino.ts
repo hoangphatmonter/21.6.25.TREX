@@ -8,7 +8,7 @@ export class Dino {
     private width: number;
     private height: number;
     private velocityY = 0; // velocity
-    private jumpAddVelocityY = 500;  // px/s // if jump, add this velocity to velocityY
+    private jumpAddVelocityY = 1500;  // px/s // if jump, add this velocity to velocityY
     private couchAddVelocityY = 100; // px/s // if on air, go down faster
     private curBtnPress = BtnStatus.NONE;
     private state = DinoStatus.GROUNDED;
