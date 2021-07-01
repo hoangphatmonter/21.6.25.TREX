@@ -14,7 +14,7 @@ let c: CanvasRenderingContext2D = canvas.getContext('2d')!;
 enum GameState { READY, PLAYING, OVER };
 
 export const GRAVITY = 700; // px/s^2
-const GAMESPEED = 200; // px/s
+let GAMESPEED = 200; // px/s
 // Button status
 let btnPressed: BtnStatus;
 let gameState: GameState;
@@ -125,6 +125,14 @@ function update(time: number, delta: number) {
             }
             cactusSpawnTime = genCacTime();
         }
+
+        // change game speed slowly
+        bg.addMoreVelocity(0.05 / 20);
+        ground.addMoreVelocity(0.05);
+        enemies.forEach(i => {
+            i.addMoreVelocity(0.05);
+        })
+        GAMESPEED += 0.05;
     }
 }
 
@@ -189,10 +197,11 @@ canvas.addEventListener('click', (event: MouseEvent) => {
 })
 
 function init(width: number, height: number, state: GameState) {
-    console.log('dlsajd')
     // update canvas size
     canvas.width = width - 100;
     canvas.height = height - 100;
+
+    GAMESPEED = 200;
 
     btnPressed = BtnStatus.NONE;
     gameState = state;
@@ -215,7 +224,7 @@ function init(width: number, height: number, state: GameState) {
 }
 
 function genCacTime() {
-    return (Math.floor(Math.random() * 2) + 2) * 1000; // 1-4s
+    return (Math.floor(Math.random() * 2) + 2 - GAMESPEED / 200) * 1000; // 1-4s
 }
 
 function getMousePosInCanvasCordinates(canvas: HTMLCanvasElement, event: MouseEvent) {

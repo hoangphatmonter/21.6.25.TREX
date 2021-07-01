@@ -23,7 +23,6 @@ export class Ground {
         this.images[0].image.onload = () => {
             this.width = this.images[0].image.width;
             this.height = this.images[0].image.height;
-            console.log(this.width, this.height);
         }
     }
 
@@ -33,6 +32,10 @@ export class Ground {
 
     getHeight() {
         return this.height;
+    }
+
+    addMoreVelocity(amount: number) {
+        this.xVelocity += amount;
     }
 
     update(delta: number, canvas: HTMLCanvasElement) {

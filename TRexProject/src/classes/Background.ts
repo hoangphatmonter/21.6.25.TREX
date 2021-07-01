@@ -28,6 +28,10 @@ export class BackGround {
         }
     }
 
+    addMoreVelocity(amount: number) {
+        this.xVelocity += amount;
+    }
+
     update(delta: number) {
         for (let i = 0; i < this.images.length; i++) {
             // delete ground if out of screen

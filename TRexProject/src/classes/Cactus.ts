@@ -21,6 +21,10 @@ export class Cactus {
         }
     }
 
+    addMoreVelocity(amount: number) {
+        this.xVelocity += amount;
+    }
+
     update(delta: number) {
         this.xBottom = this.xBottom - this.xVelocity * delta / 1000;
     }

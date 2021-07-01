@@ -24,6 +24,10 @@ export class Bird {
         }
     }
 
+    addMoreVelocity(amount: number) {
+        this.xVelocity += amount;
+    }
+
     update(delta: number) {
         // change position
         this.xBottom = this.xBottom - this.xVelocity * delta / 1000;
