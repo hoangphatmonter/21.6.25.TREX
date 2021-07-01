@@ -8,17 +8,15 @@ export class Dino {
     private width: number;
     private height: number;
     private velocityY = 0; // velocity
-    private jumpAddVelocityY = 300;  // px/s // if jump, add this velocity to velocityY
+    private jumpAddVelocityY = 500;  // px/s // if jump, add this velocity to velocityY
     private couchAddVelocityY = 100; // px/s // if on air, go down faster
     private curBtnPress = BtnStatus.NONE;
     private state = DinoStatus.GROUNDED;
     private image: HTMLImageElement;
     // for animation
     private path = './images/dino/';
-    private noOfIdleFrames = 1;
     private noOfRunFrames = 2;
     private noOfCouchFrames = 2;
-    private curIdleFrames = 0;
     private curRunFrames = 0;
     private curCouchFrames = 0;
     private sumDelta = 0;

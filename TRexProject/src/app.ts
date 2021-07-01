@@ -1,9 +1,11 @@
 import { Dino, BtnStatus } from './classes/Dino'
 import { Cactus } from './classes/Cactus'
+import { Bird } from './classes/Bird'
 import { Ground } from './classes/Ground'
 import { ScoreCounter } from './classes/ScoreCounter'
 import { GameOverScene } from './classes/GameOverScene'
 import { StartScene } from './classes/StartScene'
+import { BackGround } from './classes/Background'
 
 // get the canvas of the screen
 let canvas: HTMLCanvasElement = document.getElementsByTagName('canvas')[0];
@@ -12,10 +14,13 @@ let c: CanvasRenderingContext2D = canvas.getContext('2d')!;
 enum GameState { READY, PLAYING, OVER };
 
 export const GRAVITY = 700; // px/s^2
+const GAMESPEED = 200; // px/s
 // Button status
 let btnPressed: BtnStatus;
 let gameState: GameState;
 
+// create background
+let bg: BackGround;
 // create player
 let dino: Dino;
 // create ground
@@ -23,7 +28,7 @@ let ground: Ground;
 // create score counter
 const scoreCounter = new ScoreCounter(20, 20, 15);
 // list of cactuses
-let cactuses: Cactus[];
+let enemies: (Cactus | Bird)[];
 // game start box
 let startScene: StartScene;
 // game over box
@@ -56,6 +61,9 @@ function update(time: number, delta: number) {
     if (gameState === GameState.PLAYING) {
         // some code put here if window resize
 
+        // update bg
+        bg.update(delta);
+
         // update ground
         ground.update(delta, canvas);
 
@@ -64,25 +72,25 @@ function update(time: number, delta: number) {
 
         // update score
         let curScore = scoreCounter.getScore();
-        scoreCounter.setScore(curScore + 1);
+        scoreCounter.setScore(curScore + Math.floor(GAMESPEED * delta / 1000));
 
         // update cactus state
-        for (let i = 0; i < cactuses.length; i++) {
-            cactuses[i].update(delta);
+        for (let i = 0; i < enemies.length; i++) {
+            enemies[i].update(delta);
             // check collision
 
             // destroy if out of scene
-            if (cactuses[i].getBotRightPosition()[0] < 0) {
-                cactuses.splice(i, 1);
+            if (enemies[i].getBotRightPosition()[0] < 0) {
+                enemies.splice(i, 1);
                 i--;
                 continue;
             }
 
             // collision happen when cactus enter the Dino area
-            let cLeftX = cactuses[i].getTopLeftPosition()[0];
-            let cRightX = cactuses[i].getTopRightPosition()[0];
-            let cTopY = cactuses[i].getTopLeftPosition()[1];
-            let cBotY = cactuses[i].getBotLeftPosition()[1];
+            let cLeftX = enemies[i].getTopLeftPosition()[0];
+            let cRightX = enemies[i].getTopRightPosition()[0];
+            let cTopY = enemies[i].getTopLeftPosition()[1];
+            let cBotY = enemies[i].getBotLeftPosition()[1];
             let dLeftX = dino.getBotLeftPosition()[0];
             let dRightX = dino.getBotRightPosition()[0];
             let dTopY = dino.getTopLeftPosition()[1];
@@ -108,7 +116,13 @@ function update(time: number, delta: number) {
         // push more cactus
         cactusSpawnTime -= delta;
         if (cactusSpawnTime < 0) {
-            cactuses.push(new Cactus(canvas.width + 10, canvas.height - ground.getHeight(), 200));
+            if (Math.random() <= 0.7) {
+                enemies.push(new Cactus(canvas.width + 10, canvas.height - ground.getHeight(), GAMESPEED));
+            }
+            else {
+                let h = canvas.height - ground.getHeight() - Math.random() * canvas.height / 2;
+                enemies.push(new Bird(canvas.width + 10, h, GAMESPEED));
+            }
             cactusSpawnTime = genCacTime();
         }
     }
@@ -130,10 +144,12 @@ function render() {
         scoreCounter.draw(c);
         // draw ground
         ground.draw(c);
+        // draw bg
+        bg.draw(c);
         // draw all objects
         dino.draw(c);
-        for (let i = 0; i < cactuses.length; i++) {
-            cactuses[i].draw(c);
+        for (let i = 0; i < enemies.length; i++) {
+            enemies[i].draw(c);
         }
     }
 }
@@ -186,9 +202,10 @@ function init(width: number, height: number, state: GameState) {
     }
 
     gameOverScene = new GameOverScene(canvas.width / 2, canvas.height / 2);
-    ground = new Ground(0, canvas.height, 200);
+    ground = new Ground(0, canvas.height, GAMESPEED);
     dino = new Dino(0 + 50, canvas.height - ground.getHeight() - 100);
-    cactuses = [];
+    enemies = [];
+    bg = new BackGround(canvas.width, 100, GAMESPEED / 20);
 
     scoreCounter.setScore(0);
     lastTime = window.performance.now()
@@ -199,12 +216,6 @@ function init(width: number, height: number, state: GameState) {
 
 function genCacTime() {
     return (Math.floor(Math.random() * 2) + 2) * 1000; // 1-4s
-}
-
-function isInArea(value: number, range1: number, range2: number) {
-    if (value >= range1 && value <= range2)
-        return true;
-    return false;
 }
 
 function getMousePosInCanvasCordinates(canvas: HTMLCanvasElement, event: MouseEvent) {

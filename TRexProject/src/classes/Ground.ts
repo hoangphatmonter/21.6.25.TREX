@@ -23,6 +23,7 @@ export class Ground {
         this.images[0].image.onload = () => {
             this.width = this.images[0].image.width;
             this.height = this.images[0].image.height;
+            console.log(this.width, this.height);
         }
     }
 
@@ -46,8 +47,9 @@ export class Ground {
             this.images[i].xBotLeft = this.images[i].xBotLeft - this.xVelocity * delta / 1000;
             // add more ground if need
             if (i === this.images.length - 1 &&
-                this.images[i].xBotLeft + this.width <= canvas.width) {
-                this.images.push(new GroundImage(new Image(), this.images[i].xBotLeft + canvas.width));
+                this.images[i].xBotLeft + this.width <= canvas.width
+            ) {
+                this.images.push(new GroundImage(new Image(), this.images[i].xBotLeft + this.width));
                 this.images[i + 1].image.src = this.path + 'ground.png';
                 break;
             }
