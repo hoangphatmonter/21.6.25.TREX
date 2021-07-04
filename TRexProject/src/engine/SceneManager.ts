@@ -1,5 +1,5 @@
 import { Renderer } from './Renderer'
-import { GameObject } from './GameObject';
+import { GameObject } from './GameObjects/GameObject';
 
 export class SceneManager {
     constructor(

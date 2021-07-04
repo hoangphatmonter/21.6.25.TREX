@@ -1,14 +1,12 @@
-import { GOImage } from "../engine/GameObject";
+import { GameObjectImage } from "../engine/GameObjects/GameObjectImage";
 
-export class RestartBtn extends GOImage {
+export class RestartBtn extends GameObjectImage {
     constructor(
         xTopLeft: number,
         yTopLeft: number,
         path: string,
         imageName: string,
         scale: number,
-
-        private xVelocity: number
     ) {
         super(xTopLeft, yTopLeft, path, imageName, scale);
     }

@@ -1,6 +1,6 @@
-import { GOText } from "../engine/GameObject";
+import { GameObjectText } from "../engine/GameObjects/GameObjectText";
 
-export class ScoreCounter extends GOText {
+export class ScoreCounter extends GameObjectText {
     private score: number;
     private highscore: number;
     constructor(

@@ -1,6 +1,6 @@
-import { GOImage } from "../engine/GameObject";
+import { GameObjectImage } from "../engine/GameObjects/GameObjectImage";
 
-export class Cactus extends GOImage {
+export class Cactus extends GameObjectImage {
     constructor(
         xTopLeft: number,
         yTopLeft: number,

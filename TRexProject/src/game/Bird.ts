@@ -1,6 +1,6 @@
-import { GOImage } from "../engine/GameObject";
+import { GameObjectImage } from "../engine/GameObjects/GameObjectImage";
 
-export class Bird extends GOImage {
+export class Bird extends GameObjectImage {
     // for animation
     private sumDelta = 0;
     private curFrame = 0;

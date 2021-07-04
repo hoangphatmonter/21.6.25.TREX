@@ -1,6 +1,8 @@
-import { GOImage, GOImagesGroup, GOImagesGroupEle } from "../engine/GameObject";
+import { GameObjectImage } from "../engine/GameObjects/GameObjectImage";
+import { GameObjectImagesGroup, GameObjectImagesGroupEle } from "../engine/GameObjects/GameObjectImagesGroup";
 
-export class Ground extends GOImagesGroup {
+
+export class Ground extends GameObjectImagesGroup {
     constructor(
         xTopLeft: number,
         yTopLeft: number,

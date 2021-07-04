@@ -77,7 +77,7 @@ export class GamePlay extends Scene {
             }
             else {
                 let h = this.ground.getGround() - Math.random() * this.canvasHeight / 2;
-                this.gameObjects.push(new Bird(this.canvasWidth + 50, h, './images/bird/', 'fly0', 1, this.gameSpeed));
+                this.gameObjects.push(new Bird(this.canvasWidth + 50, h, './images/bird/', 'fly0.png', 1, this.gameSpeed));
             }
             this.cactusSpawnTime = this.genCacTime();
         }

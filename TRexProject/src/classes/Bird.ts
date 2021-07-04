@@ -42,6 +42,7 @@ export class Bird {
 
     private changeAnimation() {
         this.curFrame = (this.curFrame + 1) % this.noOfFrames;
+        console.log(this.path + 'fly' + this.curFrame.toString() + '.png');
         this.image.src = this.path + 'fly' + this.curFrame.toString() + '.png';
         // update width and height
         this.image.onload = () => {

@@ -1,12 +1,12 @@
 import { Ground } from './Ground'
 import { GRAVITY } from '../app';
-import { GOImage } from '../engine/GameObject';
+import { GameObjectImage } from '../engine/GameObjects/GameObjectImage';
 import { InputHandler } from '../engine/InputHandler';
 
 enum DinoStatus { GROUNDED, AIR, COUCH };
 export enum BtnStatus { JUMP, COUCH, NONE };
 
-export class Dino extends GOImage {
+export class Dino extends GameObjectImage {
     private velocityY = 0; // velocity
     private jumpAddVelocityY = 1500;  // px/s // if jump, add this velocity to velocityY
     private couchAddVelocityY = 100; // px/s // if on air, go down faster
