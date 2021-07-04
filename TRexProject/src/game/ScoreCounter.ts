@@ -9,10 +9,11 @@ export class ScoreCounter extends GameObjectText {
         text: string,
         textSize: number,
         color: string,
+        textAlign: CanvasTextAlign,
 
         private gameSpeed: number
     ) {
-        super(xTopLeft, yTopLeft, text, textSize, color);
+        super(xTopLeft, yTopLeft, text, textSize, color, textAlign);
         this.score = 0;
         this.highscore = 0;
     }

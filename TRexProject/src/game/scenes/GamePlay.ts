@@ -3,6 +3,7 @@ import { Bird } from "../Bird";
 import { Cactus } from "../Cactus";
 import { Dino } from "../Dino";
 import { Ground } from "../Ground";
+import { ScoreCounter } from "../ScoreCounter";
 import { GameOver } from "./GameOver";
 import { GameStart } from "./GameStart";
 
@@ -11,18 +12,30 @@ export class GamePlay extends Scene {
     private gameStart: GameStart | undefined;
     private gameOver: GameOver | undefined;
     private cactusSpawnTime: number;
+    // obj of this scene
+    private dino: Dino;
+    private ground: Ground;
+    private score: ScoreCounter;
     constructor(
         isActive: Boolean,
         canvasWidth: number,
         canvasHeight: number,
 
-        private dino: Dino,
-        private ground: Ground,
         private gameSpeed: number,
     ) {
         super(isActive, canvasWidth, canvasHeight);
 
         this.cactusSpawnTime = this.genCacTime();
+
+        this.ground = new Ground(0, this.canvasHeight - 50, './images/ground/', 'ground.png', 1, this.gameSpeed, this.canvasWidth);
+        this.gameObjects.push(this.ground)
+
+        // Note: y must minus more with dino image height
+        this.dino = new Dino(50, this.canvasHeight - this.ground.getGround(), './images/dino/', 'idle.png', 1, this.ground);
+        this.gameObjects.push(this.dino);
+
+        this.score = new ScoreCounter(30, 30, 'Score: 0', 15, 'black', 'left', this.gameSpeed);
+        this.gameObjects.push(this.score);
     }
     override update(time: number, delta: number) {
         super.update(time, delta);
@@ -56,7 +69,10 @@ export class GamePlay extends Scene {
                 ) {
                     // stop the game (remove the newest request frame in queue)
                     this.setActive(false);
+
+                    this.score.updateHighScore();
                     this.gameOver?.setActive(true);
+                    this.gameOver?.updateScore(this.score.getScore(), this.score.getHighScore());
                     // change game state
                     console.log('over')
                     // update high score if need
@@ -85,6 +101,22 @@ export class GamePlay extends Scene {
     setScene(gameStart: GameStart, gameOver: GameOver) {
         this.gameStart = gameStart;
         this.gameOver = gameOver;
+    }
+    resetScene() {
+        this.gameObjects = [];
+
+        this.cactusSpawnTime = this.genCacTime();
+
+        this.ground = new Ground(0, this.canvasHeight - 50, './images/ground/', 'ground.png', 1, this.gameSpeed, this.canvasWidth);
+        this.gameObjects.push(this.ground)
+
+        // Note: y must minus more with dino image height
+        this.dino = new Dino(50, this.canvasHeight - this.ground.getGround(), './images/dino/', 'idle.png', 1, this.ground);
+        this.gameObjects.push(this.dino);
+
+        this.score.setScore(0);
+
+        this.gameObjects.push(this.score);
     }
 
     genCacTime() {

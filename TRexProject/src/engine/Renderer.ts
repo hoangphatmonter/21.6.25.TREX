@@ -2,6 +2,7 @@ import { GameObject } from "./GameObjects/GameObject";
 import { GameObjectImage } from "./GameObjects/GameObjectImage";
 import { GameObjectImagesGroup, GameObjectImagesGroupEle } from "./GameObjects/GameObjectImagesGroup";
 import { GameObjectText } from "./GameObjects/GameObjectText";
+import { GameObjectRectangle } from "./GameObjects/GameOjectRectangle";
 
 export class Renderer {
     private ctx: CanvasRenderingContext2D;
@@ -20,8 +21,8 @@ export class Renderer {
             let data = gameObject.getRenderData();
             this.ctx.beginPath();
             this.ctx.font = data.size + "px sans-serif";
-            this.ctx.fillStyle = "blue";
-            this.ctx.textAlign = "left";
+            this.ctx.fillStyle = data.color;
+            this.ctx.textAlign = data.align;
             this.ctx.fillText(data.text, data.xTL, data.yTL);
             this.ctx.closePath();
         }
@@ -31,6 +32,13 @@ export class Renderer {
                 this.ctx.beginPath();
                 this.ctx.drawImage(d.image, d.xTL, d.yTL, d.width, d.height);
             })
+        }
+        else if (gameObject instanceof GameObjectRectangle) {
+            let data = gameObject.getRenderData();
+            this.ctx.beginPath();
+            this.ctx.rect(data.xTL, data.yTL, data.w, data.h);
+            this.ctx.fillStyle = 'grey';
+            this.ctx.fill();
         }
 
     }

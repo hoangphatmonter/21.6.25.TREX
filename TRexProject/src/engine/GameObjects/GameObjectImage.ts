@@ -35,4 +35,14 @@ export class GameObjectImage extends GameObject {
     }
     override update(time: number, delta: number) {
     }
+    isInImage(x: number, y: number): boolean {
+        if (
+            x > this.xTopLeft &&
+            x < this.xTopLeft + this.width &&
+            y > this.yTopLeft &&
+            y < this.yTopLeft + this.height
+        )
+            return true;
+        return false;
+    }
 }

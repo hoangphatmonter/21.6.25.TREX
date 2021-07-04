@@ -26,7 +26,6 @@ export class GameObjectImagesGroup extends GameObject {
         this.images = [];
         this.oriWidth = 0;
         this.oriHeight = 0;
-        console.log(this.images.length)
         let image = new Image();
         image.onload = () => {
             let width = image.width * scale;

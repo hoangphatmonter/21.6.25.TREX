@@ -35,6 +35,7 @@ export class InputHandler {
         })
 
         this.canvas.addEventListener('click', (event: MouseEvent) => {
+            console.log('click')
             this.mouseState = this.getMousePosInCanvasCordinates(event);
         })
     }
@@ -42,6 +43,8 @@ export class InputHandler {
         // lock the current input state
         InputHandler.curFrameBtnStates = JSON.parse(JSON.stringify(this.btnStates));
         InputHandler.curFrameMouseState = JSON.parse(JSON.stringify(this.mouseState));
+        if (this.mouseState.state === BtnState.DOWN)
+            this.mouseState.state = BtnState.UP;
     }
 
     static isBtnDown(btn: 'w' | 's') {

@@ -7,7 +7,8 @@ export class SceneManager {
     ) { }
     update(time: number, delta: number) {
         this.scenes.forEach(scene => {
-            scene.update(time, delta);
+            if (scene.isSceneActive())
+                scene.update(time, delta);
         });
     }
     render(renderer: Renderer) {
