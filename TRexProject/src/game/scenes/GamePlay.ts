@@ -1,6 +1,7 @@
 import { Scene } from "../../engine/SceneManager";
 import { Bird } from "../Bird";
 import { Cactus } from "../Cactus";
+import { Cloud } from "../Cloud";
 import { Dino } from "../Dino";
 import { Ground } from "../Ground";
 import { ScoreCounter } from "../ScoreCounter";
@@ -11,7 +12,9 @@ export class GamePlay extends Scene {
     // other scene state
     private gameStart: GameStart | undefined;
     private gameOver: GameOver | undefined;
+    // variable
     private cactusSpawnTime: number;
+    private cloudSpawnTime: number;
     // obj of this scene
     private dino: Dino;
     private ground: Ground;
@@ -26,6 +29,7 @@ export class GamePlay extends Scene {
         super(isActive, canvasWidth, canvasHeight);
 
         this.cactusSpawnTime = this.genCacTime();
+        this.cloudSpawnTime = this.genCacTime();
 
         this.ground = new Ground(0, this.canvasHeight - 50, './images/ground/', 'ground.png', 1, this.gameSpeed, this.canvasWidth);
         this.gameObjects.push(this.ground)
@@ -52,7 +56,7 @@ export class GamePlay extends Scene {
                     continue;
                 }
 
-                // collision happen when cactus enter the Dino area
+                // collision happen when cactus or bird enter the Dino area
                 let cLeftX = obj.getTopLeftPosition()[0];
                 let cRightX = obj.getTopRightPosition()[0];
                 let cTopY = obj.getTopLeftPosition()[1];
@@ -73,13 +77,14 @@ export class GamePlay extends Scene {
                     this.score.updateHighScore();
                     this.gameOver?.setActive(true);
                     this.gameOver?.updateScore(this.score.getScore(), this.score.getHighScore());
-                    // change game state
-                    console.log('over')
-                    // update high score if need
-                    // scoreCounter.updateHighScore();
-
-                    //cactuses = [];
-                    //scoreCounter.setScore(0);
+                }
+            }
+            else if (obj instanceof Cloud) {
+                // destroy if out of scene
+                if (obj.getBotRightPosition()[0] < 0) {
+                    this.gameObjects.splice(i, 1);
+                    i--;
+                    continue;
                 }
             }
         }
@@ -97,6 +102,12 @@ export class GamePlay extends Scene {
             }
             this.cactusSpawnTime = this.genCacTime();
         }
+        // push more cloud
+        this.cloudSpawnTime -= delta;
+        if (this.cloudSpawnTime < 0) {
+            this.gameObjects.push(new Cloud(this.canvasWidth + 50, this.ground.getGround() - 100 - (Math.random() * 300), './images/cloud/', 'cloud.png', Math.random() * 2, this.gameSpeed / 2));
+            this.cloudSpawnTime = this.genCacTime();
+        }
     }
     setScene(gameStart: GameStart, gameOver: GameOver) {
         this.gameStart = gameStart;
@@ -106,6 +117,7 @@ export class GamePlay extends Scene {
         this.gameObjects = [];
 
         this.cactusSpawnTime = this.genCacTime();
+        this.cloudSpawnTime = this.genCacTime();
 
         this.ground = new Ground(0, this.canvasHeight - 50, './images/ground/', 'ground.png', 1, this.gameSpeed, this.canvasWidth);
         this.gameObjects.push(this.ground)
