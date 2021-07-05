@@ -1,7 +1,11 @@
+enum Status { UP, DOWN }
+
 export class InputHandler {
 
-    private inputQueue: { key: string, x?: number, y?: number }[];
-    private static registrationFuncMap: Map<string, Function[]> = new Map();
+    private inputQueue: { key: string, status?: Status, x?: number, y?: number }[];
+    private static registrationDownFuncMap: Function[] = [];
+    private static registrationUpFuncMap: Function[] = [];
+    private static registrationClickFuncMap: Function[] = [];
 
     constructor(
         private canvas: HTMLCanvasElement
@@ -10,11 +14,11 @@ export class InputHandler {
     }
     run() {
         window.addEventListener('keydown', (event: KeyboardEvent) => {
-            this.inputQueue.push({ key: event.key + 'D' });
+            this.inputQueue.push({ key: event.key, status: Status.DOWN });
         })
 
         window.addEventListener('keyup', (event: KeyboardEvent) => {
-            this.inputQueue.push({ key: event.key + 'U' });
+            this.inputQueue.push({ key: event.key, status: Status.UP });
         })
 
         this.canvas.addEventListener('click', (event: MouseEvent) => {
@@ -24,39 +28,33 @@ export class InputHandler {
     processInput() {
         while (this.inputQueue.length > 0) {
             let ele = this.inputQueue.shift();
-            if (ele?.key == 'click')
-                InputHandler.registrationFuncMap.get('click')?.forEach(func => {
+            if (ele?.key == 'click') {
+                InputHandler.registrationClickFuncMap.forEach(func => {
                     func(ele?.x, ele?.y);
                 })
-
+            }
             else {
-                if (ele)
-                    InputHandler.registrationFuncMap.get(ele.key)?.forEach(func => {
-                        func();
+                if (ele?.status == Status.DOWN)
+                    InputHandler.registrationDownFuncMap.forEach(func => {
+                        func(ele?.key);
+                    })
+                else
+                    InputHandler.registrationUpFuncMap.forEach(func => {
+                        func(ele?.key);
                     })
             }
         }
     }
 
-    static registerKeyDown(key: string, callback: () => void) {
-        if (InputHandler.registrationFuncMap.has(key + 'D'))
-            InputHandler.registrationFuncMap.get(key + 'D')?.push(callback);
-        else
-            InputHandler.registrationFuncMap.set(key + 'D', [callback]);
+    static register(state: 'keydown' | 'keyup' | 'click', callback: (key: string) => void) {
+        if (state === 'keydown')
+            InputHandler.registrationDownFuncMap.push(callback);
+        else if (state === 'keyup')
+            InputHandler.registrationUpFuncMap.push(callback);
     }
-
-    static registerKeyUp(key: string, callback: () => void) {
-        if (InputHandler.registrationFuncMap.has(key + 'U'))
-            InputHandler.registrationFuncMap.get(key + 'U')?.push(callback);
-        else
-            InputHandler.registrationFuncMap.set(key + 'U', [callback]);
-    }
-
-    static registerClick(callback: (x: number, y: number) => void) {
-        if (InputHandler.registrationFuncMap.has('click'))
-            InputHandler.registrationFuncMap.get('click')?.push(callback);
-        else
-            InputHandler.registrationFuncMap.set('click', [callback]);
+    static registerMouse(state: 'click', callback: (x: number, y: number) => void) {
+        if (state === 'click')
+            InputHandler.registrationClickFuncMap.push(callback);
     }
 
     private getMousePosInCanvasCordinates(event: MouseEvent) {

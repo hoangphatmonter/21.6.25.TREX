@@ -30,17 +30,17 @@ export class Dino extends GameObjectImage {
     ) {
         super(xTopLeft, yTopLeft, path, imageName, scale);
 
-        InputHandler.registerKeyDown('w', () => {
-            this.curBtnPress = BtnStatus.JUMP;
+        InputHandler.register('keydown', (key: string) => {
+            if (key === 'w' || key === ' ')
+                this.curBtnPress = BtnStatus.JUMP;
+            else if (key === 's')
+                this.curBtnPress = BtnStatus.COUCH;
         })
-        InputHandler.registerKeyDown('s', () => {
-            this.curBtnPress = BtnStatus.COUCH;
-        })
-        InputHandler.registerKeyUp('s', () => {
-            this.curBtnPress = BtnStatus.NONE;
-        })
-        InputHandler.registerKeyUp('w', () => {
-            this.curBtnPress = BtnStatus.NONE;
+        InputHandler.register('keyup', (key: string) => {
+            if (key === 's' || key === 'w' || key === ' ') {
+                this.curBtnPress = BtnStatus.NONE;
+                this.curBtnPress = BtnStatus.NONE;
+            }
         })
     }
 

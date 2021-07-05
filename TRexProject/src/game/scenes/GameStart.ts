@@ -32,7 +32,7 @@ export class GameStart extends Scene {
         this.playBtn = new GameObjectImage((this.canvasWidth - w) / 2, (this.canvasHeight - h) / 2, './images/', 'playButton.png', 0.1);
         this.gameObjects.push(this.playBtn);
 
-        InputHandler.registerClick((x: number, y: number) => {
+        InputHandler.registerMouse('click', (x: number, y: number) => {
             if (this.playBtn.isInImage(x, y)) {
                 this.setActive(false);
                 this.gamePlay?.setActive(true);
