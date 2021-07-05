@@ -1,68 +1,68 @@
-import { BtnState } from "./GameCore";
-
 export class InputHandler {
-    private btnStates: { w: BtnState, s: BtnState };
-    private mouseState: { state: BtnState, x: number, y: number };
 
-    private static curFrameBtnStates: { w: BtnState, s: BtnState };
-    private static curFrameMouseState: { state: BtnState, x: number, y: number }
+    private inputQueue: { key: string, x?: number, y?: number }[];
+    private static registrationFuncMap: Map<string, Function[]> = new Map();
 
     constructor(
         private canvas: HTMLCanvasElement
     ) {
-        this.btnStates = { w: BtnState.UP, s: BtnState.UP };
-        this.mouseState = { state: BtnState.UP, x: 0, y: 0 };
-        InputHandler.curFrameBtnStates = { w: BtnState.UP, s: BtnState.UP };
-        InputHandler.curFrameMouseState = { state: BtnState.UP, x: 0, y: 0 };
+        this.inputQueue = [];
     }
     run() {
         window.addEventListener('keydown', (event: KeyboardEvent) => {
-            if (event.key === " " || event.key === 'w') {
-                this.btnStates.w = BtnState.DOWN;
-            }
-            else if (event.key == 's') {
-                this.btnStates.s = BtnState.DOWN;
-            }
+            this.inputQueue.push({ key: event.key + 'D' });
         })
 
         window.addEventListener('keyup', (event: KeyboardEvent) => {
-            if (event.key === " " || event.key === 'w') {
-                this.btnStates.w = BtnState.UP;
-            }
-            else if (event.key === 's') {
-                this.btnStates.s = BtnState.UP;
-            }
+            this.inputQueue.push({ key: event.key + 'U' });
         })
 
         this.canvas.addEventListener('click', (event: MouseEvent) => {
-            console.log('click')
-            this.mouseState = this.getMousePosInCanvasCordinates(event);
+            this.inputQueue.push(this.getMousePosInCanvasCordinates(event))
         })
     }
     processInput() {
-        // lock the current input state
-        InputHandler.curFrameBtnStates = JSON.parse(JSON.stringify(this.btnStates));
-        InputHandler.curFrameMouseState = JSON.parse(JSON.stringify(this.mouseState));
-        if (this.mouseState.state === BtnState.DOWN)
-            this.mouseState.state = BtnState.UP;
+        while (this.inputQueue.length > 0) {
+            let ele = this.inputQueue.shift();
+            if (ele?.key == 'click')
+                InputHandler.registrationFuncMap.get('click')?.forEach(func => {
+                    func(ele?.x, ele?.y);
+                })
+
+            else {
+                if (ele)
+                    InputHandler.registrationFuncMap.get(ele.key)?.forEach(func => {
+                        func();
+                    })
+            }
+        }
     }
 
-    static isBtnDown(btn: 'w' | 's') {
-        if (btn === 'w' && InputHandler.curFrameBtnStates.w === BtnState.DOWN)
-            return true;
-        else if (btn === 's' && InputHandler.curFrameBtnStates.s === BtnState.DOWN)
-            return true;
-        return false;
+    static registerKeyDown(key: string, callback: () => void) {
+        if (InputHandler.registrationFuncMap.has(key + 'D'))
+            InputHandler.registrationFuncMap.get(key + 'D')?.push(callback);
+        else
+            InputHandler.registrationFuncMap.set(key + 'D', [callback]);
     }
 
-    static mouseState() {
-        return InputHandler.curFrameMouseState;
+    static registerKeyUp(key: string, callback: () => void) {
+        if (InputHandler.registrationFuncMap.has(key + 'U'))
+            InputHandler.registrationFuncMap.get(key + 'U')?.push(callback);
+        else
+            InputHandler.registrationFuncMap.set(key + 'U', [callback]);
+    }
+
+    static registerClick(callback: (x: number, y: number) => void) {
+        if (InputHandler.registrationFuncMap.has('click'))
+            InputHandler.registrationFuncMap.get('click')?.push(callback);
+        else
+            InputHandler.registrationFuncMap.set('click', [callback]);
     }
 
     private getMousePosInCanvasCordinates(event: MouseEvent) {
         let rect = this.canvas.getBoundingClientRect();
         return {
-            state: BtnState.DOWN,
+            key: 'click',
             x: event.clientX - rect.left,
             y: event.clientY - rect.top
         }

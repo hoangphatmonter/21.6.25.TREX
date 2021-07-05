@@ -31,14 +31,16 @@ export class GameStart extends Scene {
         h = 140;
         this.playBtn = new GameObjectImage((this.canvasWidth - w) / 2, (this.canvasHeight - h) / 2, './images/', 'playButton.png', 0.1);
         this.gameObjects.push(this.playBtn);
+
+        InputHandler.registerClick((x: number, y: number) => {
+            if (this.playBtn.isInImage(x, y)) {
+                this.setActive(false);
+                this.gamePlay?.setActive(true);
+            }
+        })
     }
     override update(time: number, delta: number) {
-        let mouseState = InputHandler.mouseState();
-        if (mouseState.state === BtnState.DOWN && this.playBtn.isInImage(mouseState.x, mouseState.y)) {
-            console.log('ya')
-            this.setActive(false);
-            this.gamePlay?.setActive(true);
-        }
+
     }
     setScene(gamePlay: GamePlay, gameOver: GameOver) {
         this.gamePlay = gamePlay;

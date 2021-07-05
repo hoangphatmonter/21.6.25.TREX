@@ -44,15 +44,18 @@ export class GameOver extends Scene {
         // highscore text
         this.highScoreText = new GameObjectText(this.canvasWidth / 2, this.canvasHeight / 2 + h / 3, `High score: ${this.highScore}`, 20, 'white', 'center');
         this.gameObjects.push(this.highScoreText);
+
+        InputHandler.registerClick((x: number, y: number) => {
+            if (this.rsBtn.isInImage(x, y)) {
+                this.setActive(false);
+                this.gamePlay?.setActive(true);
+                // reset game play
+                this.gamePlay?.resetScene();
+            }
+        })
     }
     override update(time: number, delta: number) {
-        let mouseState = InputHandler.mouseState();
-        if (mouseState.state === BtnState.DOWN && this.rsBtn.isInImage(mouseState.x, mouseState.y)) {
-            this.setActive(false);
-            this.gamePlay?.setActive(true);
-            // reset game play
-            this.gamePlay?.resetScene();
-        }
+
     }
     setScene(gameStart: GameStart, gamePlay: GamePlay) {
         this.gameStart = gameStart;

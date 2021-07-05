@@ -29,6 +29,19 @@ export class Dino extends GameObjectImage {
         private ground: Ground
     ) {
         super(xTopLeft, yTopLeft, path, imageName, scale);
+
+        InputHandler.registerKeyDown('w', () => {
+            this.curBtnPress = BtnStatus.JUMP;
+        })
+        InputHandler.registerKeyDown('s', () => {
+            this.curBtnPress = BtnStatus.COUCH;
+        })
+        InputHandler.registerKeyUp('s', () => {
+            this.curBtnPress = BtnStatus.NONE;
+        })
+        InputHandler.registerKeyUp('w', () => {
+            this.curBtnPress = BtnStatus.NONE;
+        })
     }
 
     getBotLeftPosition(): [number, number] {
@@ -43,17 +56,11 @@ export class Dino extends GameObjectImage {
         return [this.xTopLeft, this.yTopLeft];
     }
 
-    setBtnPressed(val: BtnStatus) {
-        this.curBtnPress = val;
-    }
 
     override update(time: number, delta: number) {
-        if (InputHandler.isBtnDown('w'))
-            this.curBtnPress = BtnStatus.JUMP;
-        else if (InputHandler.isBtnDown('s'))
-            this.curBtnPress = BtnStatus.COUCH;
-        else
-            this.curBtnPress = BtnStatus.NONE;
+        // reset the cur state
+        // if (this.curRunFrames === BtnStatus.COUCH)
+        //     this.curBtnPress = BtnStatus.NONE;
 
         // check for jump
         if (this.curBtnPress === BtnStatus.JUMP && this.state === DinoStatus.GROUNDED) {
